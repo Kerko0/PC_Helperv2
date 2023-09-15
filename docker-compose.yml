@@ -1,0 +1,49 @@
+version: '3.4'
+
+networks:  
+ dev:    
+  driver: bridge
+
+
+services:
+  pchelper_backend:
+    image: kerko0/pchelper_backend:latest
+    container_name: pchelper_backend
+    ports:
+     - 8080:80
+    build:
+      context: PCHelper_backend
+      dockerfile: Dockerfile
+    environment:
+     - ConnectionStrings__DefaultConnection=User ID=pchelp; Password=pchelp123; Server=pchelper_server; Port=5432; Database=PCcomponentdb;
+    networks:
+     - dev
+
+  pchelper_frontend:
+    image: kerko0/pchelper_frontend:latest
+    container_name: pchelper
+    ports:
+     - 4200:80
+    build:
+     context: PC_Helperv2
+     dockerfile: Dockerfile
+    networks:
+     - dev
+
+  pchelper_server:
+    image: postgres:latest
+    container_name: pchelper_server
+    environment:
+     - POSTGRES_USER=pchelp
+     - POSTGRES_PASSWORD=pchelp123
+     - POSTGRES_DB=PCcomponentdb
+    ports:
+     - "5433:5432"
+    volumes:
+     - app_data:/var/lib/postgresql/data
+    networks:
+     - dev
+
+volumes:
+  app_data:
+  

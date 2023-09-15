@@ -1,0 +1,166 @@
+﻿@page "/"
+@inject HttpClient HttpClient
+
+
+<h3>Question Form</h3>
+
+@foreach (var question in questions)
+{
+	<h4>@question.Text</h4>
+	<div>
+		@foreach (var choice in question.Choices)
+		{
+			<label>
+				<input type="radio" name="@question.Text" @onchange="() => UpdateValue(question, choice.GPUValue, choice.CPUValue, choice._isNvidia)" />
+				@choice.Text
+			</label>
+			<br />
+		}
+	</div>
+}
+
+<button class="btn btn-primary" @onclick="CreatePC">Submit</button>
+
+@if(pcCreated)
+{
+	<p>Chosen CPU: @pc.cpu.Name</p>
+	<p>Chosen GPU: @pc.gpu.Name</p>
+	<p>Chosen Motherboard: @pc.motherboard.Name</p>
+	<p>Chosen RAM: @pc.RAM.Capacity GB </p>
+}
+
+
+
+@code{
+
+	private PC pc = new PC();
+	bool pcCreated = false;
+	bool isNvidia;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+
+	}
+
+
+	public class Choice
+	{
+		public string Text { get; set; }
+		public int GPUValue { get; set; }
+		public int CPUValue { get; set; }
+		public bool _isNvidia { get; set; }
+	}
+
+	async void CreatePC()
+	{
+		if(pcCreated = false)
+		{
+			string brand = isNvidia ? "Nvidia" : "AMD";
+			pc.cpu = await HttpClient.GetFromJsonAsync<CPU>(HttpClient.BaseAddress + "CPU/" + CPUValue);
+			pc.gpu = await HttpClient.GetFromJsonAsync<GPU>(HttpClient.BaseAddress + "GPU/" + GPUValue + "/" + brand);
+			pc.motherboard = await HttpClient.GetFromJsonAsync<Motherboard>(HttpClient.BaseAddress + "Mobo/" + CPUValue);
+			var rams = await HttpClient.GetFromJsonAsync<IEnumerable<RAM>>(HttpClient.BaseAddress + "RAM/all");
+			rams = rams.Where(x => x.Type == pc.motherboard.RAM).ToList();
+
+			if (CPUValue <= 2 && GPUValue <= 2)
+			{
+				pc.RAM = rams.Where(x => x.Capacity == 32).First();
+			}
+			else
+			{
+				pc.RAM = rams.Where(x => x.Capacity == 16).First();
+			}
+
+			pcCreated = true;
+		}
+		
+		OnInitializedAsync();
+	}
+
+	public class Question
+	{
+		public string Text { get; set; }
+		public List<Choice> Choices { get; set; }
+	}
+
+
+	List<Question> questions = new List<Question>
+	{
+		new Question
+		{
+			Text = "Vilka typ av spel spelar du?",
+			Choices = new List<Choice>
+			{
+				new Choice{Text = "AAA Spel", GPUValue = -3, CPUValue = -1},
+				new Choice{Text = "Kompetetiva Spel", GPUValue = -2, CPUValue = -1},
+				new Choice{Text = "Indie Spel", GPUValue = -1, CPUValue = 0},
+				new Choice{Text = "Allt möjligt", GPUValue = -2, CPUValue = -1}
+			}
+		},
+
+		new Question
+		{
+			Text = "Vilken upplösning spelar du på?",
+			Choices = new List<Choice>
+			{
+				new Choice{Text = "1080p", GPUValue = 1, CPUValue = 0},
+				new Choice{Text = "1440p", GPUValue = 0, CPUValue = 0},
+				new Choice{Text = "4K", GPUValue = -1, CPUValue = 0}
+			}
+		},
+
+		new Question
+		{
+			Text = "Vilken uppdateringsfrekvens har din monitor?",
+			Choices = new List<Choice>
+			{
+				new Choice{Text = "60hz", GPUValue = 1, CPUValue = 0},
+				new Choice{Text = "120 - 165hz", GPUValue = 0, CPUValue = -1},
+				new Choice{Text = "165 - 280hz", GPUValue = -1, CPUValue = -1}
+			}
+		},
+
+		new Question
+		{
+			Text = "Är du en content creator? (Dvs. ifall du streamar, spelar in och/eller redigerar videor)",
+			Choices = new List<Choice>
+			{
+				new Choice{Text = "Ja", GPUValue = 0, CPUValue = -1},
+				new Choice{Text = "Nej", GPUValue = 0, CPUValue = 0}
+			}
+		},
+
+		new Question
+		{
+			Text = "Föredrar du Nvidia eller AMD?",
+			Choices = new List<Choice>
+			{
+				new Choice{Text = "Nvidia", _isNvidia = true},
+				new Choice{Text = "AMD", _isNvidia = false},
+			}
+		}
+
+
+	};
+
+	public int GPUValue = 4;
+	public int CPUValue = 4;
+
+	void UpdateValue(Question question, int gpuValue, int cpuValue, bool gpuBool)
+	{
+		if(GPUValue == 1 && gpuValue <= -1)
+		{
+			return;
+		}
+
+		if(gpuBool != null)
+		{
+			gpuBool = isNvidia;
+		}
+
+		GPUValue += gpuValue;
+		CPUValue += cpuValue;
+	}
+
+}
