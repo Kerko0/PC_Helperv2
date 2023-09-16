@@ -54,7 +54,7 @@
 
 	async void CreatePC()
 	{
-		if(pcCreated = false)
+		if(pcCreated == false)
 		{
 			string brand = isNvidia ? "Nvidia" : "AMD";
 			pc.cpu = await HttpClient.GetFromJsonAsync<CPU>(HttpClient.BaseAddress + "CPU/" + CPUValue);
