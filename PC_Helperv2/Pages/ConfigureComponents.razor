@@ -99,17 +99,25 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var cpus = await HttpClient.GetFromJsonAsync<IEnumerable<CPU>>(HttpClient.BaseAddress + "cpu/all");
-        cpuDictionary = cpus.ToDictionary(x => x.Tier);
+        try
+        {
+            var cpus = await HttpClient.GetFromJsonAsync<IEnumerable<CPU>>(HttpClient.BaseAddress + "cpu/all");
+            cpuDictionary = cpus.ToDictionary(x => x.Tier);
 
-        var gpus = await HttpClient.GetFromJsonAsync<IEnumerable<GPU>>(HttpClient.BaseAddress + "gpu/all");
-        gpuDictionary = gpus.ToDictionary(x => x.Tier);
+            var gpus = await HttpClient.GetFromJsonAsync<IEnumerable<GPU>>(HttpClient.BaseAddress + "gpu/all");
+            gpuDictionary = gpus.ToDictionary(x => x.Tier);
 
-        var ram = await HttpClient.GetFromJsonAsync<IEnumerable<RAM>>(HttpClient.BaseAddress + "ram/all");
-        ramDictionary = ram.ToDictionary(x => x.Id);
+            var ram = await HttpClient.GetFromJsonAsync<IEnumerable<RAM>>(HttpClient.BaseAddress + "ram/all");
+            ramDictionary = ram.ToDictionary(x => x.Id);
 
-        var motherboards = await HttpClient.GetFromJsonAsync<IEnumerable<Motherboard>>(HttpClient.BaseAddress + "mobo/all");
-        motherboardDictionary = motherboards.ToDictionary(x => x.Tier);
+            var motherboards = await HttpClient.GetFromJsonAsync<IEnumerable<Motherboard>>(HttpClient.BaseAddress + "mobo/all");
+            motherboardDictionary = motherboards.ToDictionary(x => x.Tier);
+        }
+        catch(Exception ex)
+        {
+            Console.Write(ex);
+        }
+
 
         foreach (var tier in tiers)
         {
