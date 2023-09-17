@@ -32,5 +32,21 @@ namespace PC_helper.Controllers
 			var cpu = await _cpuRepository.GetCPUByTier(tier);
 			return Ok(cpu);
 		}
+
+		[HttpPost("add")]
+
+		public async Task<ActionResult> AddCPUs (List<CPU> cpus)
+		{
+			await _cpuRepository.AddCPUs(cpus);
+			return Ok();
+		}
+
+		[HttpDelete("all")]
+
+		public async Task<ActionResult> DeleteAll()
+		{
+			await _cpuRepository.DeleteAll();
+			return Ok();
+		}
 	}
 }

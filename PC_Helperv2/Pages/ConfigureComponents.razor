@@ -1,0 +1,189 @@
+﻿@page "/config"
+@inject HttpClient HttpClient
+@inject IJSRuntime js
+
+<h3>ConfigureComponents</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>CPU</th>
+            <th>GPU</th>
+            <th>RAM</th>
+            <th>Motherboard</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (loadedData)
+        {
+            @foreach (var tier in tiers)
+            {
+                <tr>
+                    <td>Tier @tier</td>
+                    <td>
+                        <div>
+                            <h6>Name</h6>
+                            <input type="text" @bind="cpuDictionary[tier].Name" />
+                        </div>
+                        <div class="mt-1">
+                            <h6>Brand</h6>
+                            <input type="text" placeholder="Intel/AMD" @bind="cpuDictionary[tier].Brand"/>
+                        </div>
+                        <div class="mt-1">
+                            <h6>Price</h6>
+                            <input type="text" @bind="cpuDictionary[tier].Price" />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <h6>Name</h6>
+                            <input type="text" @bind="gpuDictionary[tier].Name" />
+                        </div>
+                        <div class="mt-1">
+                            <h6>Brand</h6>
+                            <input type="text" placeholder="Intel/NVIDIA/AMD" @bind="gpuDictionary[tier].Brand" />
+                        </div>
+                        <div class="mt-1">
+                            <h6>Price</h6>
+                            <input type="text"  @bind="gpuDictionary[tier].Price" />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <h6>Capacity</h6>
+                            <input type="text"  @bind="ramDictionary[tier].Capacity" />
+                        </div>
+                        <div class="mt-1">
+                            <h6>Type (DDRx)</h6>
+                            <input type="text"  @bind="ramDictionary[tier].Type" />
+                        </div>
+                        <div class="mt-1">
+                            <h6>Price</h6>
+                            <input type="text" @bind="ramDictionary[tier].Price" />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <h6>Name</h6>
+                            <input type="text" @bind="motherboardDictionary[tier].Name" />
+                        </div>
+                        <div class="mt-1">
+                            <h6>Price</h6>
+                            <input type="text" @bind="ramDictionary[tier].Price" />
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-success" @onclick="SaveConfig">Save</button>
+<button class="btn btn-danger" @onclick="Reset">Reset</button>
+<button class="btn btn-link" @onclick="Export">Export</button>
+<div>
+    <label for="json" class="form-label">Import: </label>
+    <InputFile type="file" id="json" OnChange="@Import"/>
+</div>
+
+@code {
+    private List<int> tiers = new List<int> { 1, 2, 3, 4 };
+
+    private Dictionary<int, CPU> cpuDictionary = new Dictionary<int, CPU>();
+    private Dictionary<int, GPU> gpuDictionary = new Dictionary<int, GPU>();
+    private Dictionary<int, RAM> ramDictionary = new Dictionary<int, RAM>();
+    private Dictionary<int, Motherboard> motherboardDictionary = new Dictionary<int, Motherboard>();
+
+    bool loadedData = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cpus = await HttpClient.GetFromJsonAsync<IEnumerable<CPU>>(HttpClient.BaseAddress + "cpu/all");
+        cpuDictionary = cpus.ToDictionary(x => x.Tier);
+
+        var gpus = await HttpClient.GetFromJsonAsync<IEnumerable<GPU>>(HttpClient.BaseAddress + "gpu/all");
+        gpuDictionary = gpus.ToDictionary(x => x.Tier);
+
+        var ram = await HttpClient.GetFromJsonAsync<IEnumerable<RAM>>(HttpClient.BaseAddress + "ram/all");
+        ramDictionary = ram.ToDictionary(x => x.Id);
+
+        var motherboards = await HttpClient.GetFromJsonAsync<IEnumerable<Motherboard>>(HttpClient.BaseAddress + "mobo/all");
+        motherboardDictionary = motherboards.ToDictionary(x => x.Tier);
+
+        foreach (var tier in tiers)
+        {
+            if (!cpuDictionary.ContainsKey(tier))
+                cpuDictionary[tier] = new CPU{Tier = tier};
+            if (!gpuDictionary.ContainsKey(tier))
+                gpuDictionary[tier] = new GPU{Tier = tier};
+            if (!ramDictionary.ContainsKey(tier))
+                ramDictionary[tier] = new RAM{Id = tier};
+            if (!motherboardDictionary.ContainsKey(tier))
+                motherboardDictionary[tier] = new Motherboard{Tier = tier};
+        }
+
+        loadedData = true;
+        StateHasChanged();
+    }
+
+
+
+    private async void SaveConfig()
+    {
+        await HttpClient.PostAsJsonAsync<List<CPU>>(HttpClient.BaseAddress + "cpu/add", cpuDictionary.Values.Where(o => !string.IsNullOrWhiteSpace(o.Name)).ToList());
+        await HttpClient.PostAsJsonAsync<List<GPU>>(HttpClient.BaseAddress + "gpu/add", gpuDictionary.Values.Where(o => !string.IsNullOrWhiteSpace(o.Name)).ToList());
+        await HttpClient.PostAsJsonAsync<List<RAM>>(HttpClient.BaseAddress + "ram/add", ramDictionary.Values.ToList());
+        await HttpClient.PostAsJsonAsync<List<Motherboard>>(HttpClient.BaseAddress + "mobo/add", motherboardDictionary.Values.Where(o => !string.IsNullOrWhiteSpace(o.Name)).ToList());
+    }
+
+    private async void Reset()
+    {
+        await HttpClient.DeleteAsync(HttpClient.BaseAddress + "cpu/all");
+        await HttpClient.DeleteAsync(HttpClient.BaseAddress + "gpu/all");
+        await HttpClient.DeleteAsync(HttpClient.BaseAddress + "ram/all");
+        await HttpClient.DeleteAsync(HttpClient.BaseAddress + "mobo/all");
+        StateHasChanged();
+    }
+
+    internal class Template
+    {
+        public List<CPU> cpu { get; set; }
+        public List<GPU> gpu { get; set; }
+        public List<RAM> ram { get; set; }
+        public List<Motherboard> motherboard { get; set; }
+    }
+
+    private async void Export()
+    {
+        string jsonData = JsonSerializer.Serialize(new Template
+        {
+            cpu = cpuDictionary.Values.ToList(),
+            gpu = gpuDictionary.Values.ToList(),
+            ram = ramDictionary.Values.ToList(),
+            motherboard = motherboardDictionary.Values.ToList()
+        });
+
+        string fileName = $"pchelp-export_{DateTime.Now.ToString()}.json";
+
+        await js.InvokeAsync<object>("saveFile", fileName, jsonData);
+    }
+
+    private async void Import(InputFileChangeEventArgs e)
+    {
+        Template importedData;
+
+        using (var stream = e.File.OpenReadStream())
+        {
+            importedData = await JsonSerializer.DeserializeAsync<Template>(stream);
+        }
+        
+        cpuDictionary = importedData.cpu.ToDictionary(x => x.Tier);
+        gpuDictionary = importedData.gpu.ToDictionary(x => x.Tier);
+        ramDictionary = importedData.ram.ToDictionary(x => x.Id);
+        motherboardDictionary = importedData.motherboard.ToDictionary(x => x.Tier);
+
+        SaveConfig();
+        StateHasChanged();
+    }
+}

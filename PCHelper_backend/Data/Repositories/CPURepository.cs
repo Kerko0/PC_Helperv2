@@ -18,6 +18,9 @@ namespace PC_helper.Data.Repositories
 			return await _context.CPUs.Select(x => new CPU
 			{
 				Name = x.Name,
+				Tier = x.Tier,
+				Brand = x.Brand,
+				Price = x.Price,
 			}).ToListAsync();
 		}
 
@@ -28,5 +31,24 @@ namespace PC_helper.Data.Repositories
 			
 		}
 
+		public Task<string> AddCPUs(List<CPU> cpus)
+		{
+			_context.CPUs.AddRange(cpus);
+			_context.SaveChanges();
+
+			return Task.FromResult("CPUs Added!");		
+		}
+
+		public Task<string> DeleteAll()
+		{
+			for (int i = 1; i < 4; i++)
+			{
+				_context.CPUs.Where(x => x.Tier == i).ExecuteDelete();
+			}
+
+			_context.SaveChanges();
+
+			return Task.FromResult("Deleted all CPUs");
+		}
 	}
 }

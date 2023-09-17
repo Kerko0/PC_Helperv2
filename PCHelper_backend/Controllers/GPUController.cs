@@ -32,5 +32,21 @@ namespace PC_helper.Controllers
 			var gpu = await _gpuRepository.GetGPUByTierAndBrand(tier, brand); 
 			return Ok(gpu);
 		}
-	}
+
+        [HttpPost("add")]
+
+        public async Task<ActionResult> AddGPUs(List<GPU> gpus)
+        {
+            await _gpuRepository.AddGPUs(gpus);
+            return Ok();
+        }
+
+        [HttpDelete("all")]
+
+        public async Task<ActionResult> DeleteAll()
+        {
+            await _gpuRepository.DeleteAll();
+            return Ok();
+        }
+    }
 }

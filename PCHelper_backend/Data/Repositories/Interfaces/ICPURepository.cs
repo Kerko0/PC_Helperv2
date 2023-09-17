@@ -6,5 +6,9 @@ namespace PC_helper.Data.Repositories.Interfaces
 	{
 		Task<IEnumerable<CPU>> GetAll();
 		Task<CPU> GetCPUByTier(int tier);
+
+		Task<string> AddCPUs (List<CPU> cpus);
+
+		Task<string> DeleteAll();
 	}
 }

@@ -6,5 +6,9 @@ namespace PC_helper.Data.Repositories.Interfaces
 	{
 		Task<IEnumerable<GPU>> GetAll();
 		Task<GPU> GetGPUByTierAndBrand(int tier, string brand);
-	}
+
+        Task<string> AddGPUs(List<GPU> gpus);
+
+        Task<string> DeleteAll();
+    }
 }

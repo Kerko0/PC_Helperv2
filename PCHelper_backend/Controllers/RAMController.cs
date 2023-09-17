@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PC_helper.Data.Repositories.Interfaces;
 using PC_helper.Data.Models;
 using PC_helper.Controllers;
+using PC_helper.Data.Repositories;
 
 namespace PC_helper.Server.Controllers
 {
@@ -27,5 +28,20 @@ namespace PC_helper.Server.Controllers
 			var rams = await _ramRepository.GetAll();
 			return Ok(rams);
 		}
-	}
+
+		[HttpPost("add")]
+        public async Task<ActionResult> AddRAM(List<RAM> rams)
+		{
+            await _ramRepository.AddRAM(rams);
+            return Ok();
+        }
+
+        [HttpDelete("all")]
+
+        public async Task<ActionResult> DeleteAll()
+		{
+            await _ramRepository.DeleteAll();
+            return Ok();
+        }
+    }
 }
