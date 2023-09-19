@@ -82,4 +82,48 @@ You can also export and import data using the respective buttons for sharing pur
 **Make sure to save after importing!**
 
 ### The Quiz
-todo
+If **ALL** PC components have been properly added to each Tier you can do the quiz.
+
+Select the option that matches your answer to the question best for each question and once done press **Submit**. 
+
+This will display your results at the bottom. 
+
+To re-do the test just refresh the page.
+
+## Application Overview
+
+### Development tools
+
+This application was developed using the following frameworks and tools:
+- ASP.NET CORE
+- Blazor WebAssembly
+- Entity Framework
+- PostgreSQL
+- Docker
+
+### Architecture
+
+The project consists of:
+- **Frontend Blazor WebAssembly App:** User interface.
+- **Backend ASP.NET Core Hosted Web App:** The API handling requests between the frontend app and database.
+- **PostgreSQL Database:** SQL Database with good Docker integration to host the application's data.
+
+## Cloud Infrastructure
+
+The cloud infrastructure of this application consists of the following Azure resources:
+- Resource Group
+- App Service (S1)
+- 2 Web Apps for Frontend and Backend respectively
+- Azure PostgreSQL Database
+
+### Availability and Scaling
+
+To make sure the application runs as expected I have implemented auto-scaling features for the App Service to make sure it can handle heavier loads. 
+
+#### Autoscale Rules:
+- `Scale out if the CPU percentage is over 80 percent, up to 5 instances`
+- `Scale in if the CPU percentage decreases`
+
+Because this app is not only lightweight but also probably wont have high demand and generate any money, the availability is not very important. It is also further strengthened by the fact that this app can very easily be run locally if the cloud hosted app isn't working as expected. 
+
+
