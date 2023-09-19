@@ -116,6 +116,12 @@ The cloud infrastructure of this application consists of the following Azure res
 - 2 Web Apps for Frontend and Backend respectively
 - Azure PostgreSQL Database
 
+### Important Configuration
+Frontend webapp must have `BACKEND_URL` with the URL of the backend web app in `appsettings.json` or in the App Settings under Configuration in the Web App.
+
+Backend webapp must have PostgreSQL connection string as `DefaultConnection` in ConnectionStrings.
+You need to do Update-Database once you have provided the correct connection string to the backend webapp.
+
 ### Availability and Scaling
 
 To make sure the application runs as expected I have implemented auto-scaling features for the App Service to make sure it can handle heavier loads. 
