@@ -89,19 +89,19 @@
 	{
 		new Question
 		{
-			Text = "Vilka typ av spel spelar du?",
+			Text = "What type of games do you play?",
 			Choices = new List<Choice>
 			{
-				new Choice{Text = "AAA Spel", GPUValue = -3, CPUValue = -1},
-				new Choice{Text = "Kompetetiva Spel", GPUValue = -2, CPUValue = -1},
-				new Choice{Text = "Indie Spel", GPUValue = -1, CPUValue = 0},
-				new Choice{Text = "Allt möjligt", GPUValue = -2, CPUValue = -1}
+				new Choice{Text = "AAA Games", GPUValue = -3, CPUValue = -1},
+				new Choice{Text = "Competitive Games", GPUValue = -2, CPUValue = -1},
+				new Choice{Text = "Indie Games", GPUValue = -1, CPUValue = 0},
+				new Choice{Text = "A bit of everything", GPUValue = -2, CPUValue = -1}
 			}
 		},
 
 		new Question
 		{
-			Text = "Vilken upplösning spelar du på?",
+			Text = "What resolution do you use?",
 			Choices = new List<Choice>
 			{
 				new Choice{Text = "1080p", GPUValue = 1, CPUValue = 0},
@@ -112,7 +112,7 @@
 
 		new Question
 		{
-			Text = "Vilken uppdateringsfrekvens har din monitor?",
+			Text = "What refresh rate does your monitor have?",
 			Choices = new List<Choice>
 			{
 				new Choice{Text = "60hz", GPUValue = 1, CPUValue = 0},
@@ -123,17 +123,17 @@
 
 		new Question
 		{
-			Text = "Är du en content creator? (Dvs. ifall du streamar, spelar in och/eller redigerar videor)",
+			Text = "Are you a content creator? (I.e streaming or making/editing videos)",
 			Choices = new List<Choice>
 			{
-				new Choice{Text = "Ja", GPUValue = 0, CPUValue = -1},
-				new Choice{Text = "Nej", GPUValue = 0, CPUValue = 0}
+				new Choice{Text = "Yes", GPUValue = 0, CPUValue = -1},
+				new Choice{Text = "No", GPUValue = 0, CPUValue = 0}
 			}
 		},
 
 		new Question
 		{
-			Text = "Föredrar du Nvidia eller AMD?",
+			Text = "Do you prefer Nvidia or AMD?",
 			Choices = new List<Choice>
 			{
 				new Choice{Text = "Nvidia", _isNvidia = true},
