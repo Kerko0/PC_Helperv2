@@ -126,4 +126,13 @@ To make sure the application runs as expected I have implemented auto-scaling fe
 
 Because this app is not only lightweight but also probably wont have high demand and generate any money, the availability is not very important. It is also further strengthened by the fact that this app can very easily be run locally if the cloud hosted app isn't working as expected. 
 
+# Known Issues
+
+- Cloud hosted app doesn't work as expected because the configuration saves to the same server for everyone. This mistake was due to focusing too much on local development with docker-compose where this isn't an issue.
+- Once you've selected an answer in the quiz you can't change it, you technically can but it will ruin the test results. Current solution is to refresh the page if you make a mistake.
+- After finishing the quiz you may have to press the button multiple times.
+- There is no visual confirmation for if your configuration data got saved or reset.
+- UI is very ugly and not worked on at all.
+- Quiz doesn't display the total price yet.
+
 
